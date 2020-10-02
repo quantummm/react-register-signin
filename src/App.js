@@ -1,7 +1,7 @@
 /*
- * @Author: your name
+ * @Author: Aiden
  * @Date: 2020-09-30 12:42:01
- * @LastEditTime: 2020-10-02 10:03:40
+ * @LastEditTime: 2020-10-02 17:20:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /react-register-signin/src/App.js
