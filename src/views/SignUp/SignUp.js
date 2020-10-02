@@ -137,6 +137,7 @@ function SignUp({ authenticateRegister }) {
         //hasAuthenticationFailed: true,
       });
       setSubmitError(true);
+      //console.log(submitError);
       setSubmitErrorMessage(error.name + ": " + error.message);
       setSubmitting(false);
       return;

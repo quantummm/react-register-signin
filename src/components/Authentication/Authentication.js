@@ -51,7 +51,7 @@ export class AuthenticationManger extends React.Component {
   };
 
   //老师这边register是不是要想这样单独写一个方法，post数据进后端
-  //那后面render 里面的authenticate还需要更改到authenticateRegister这个方法吗
+  //那后面render 里面需要加authenticateRegister这个方法，还有别的比较好的方法吗
   authenticateRegister = async (email, name, password) => {
     const resp = await request(registUrl, {
       method: "POST",
