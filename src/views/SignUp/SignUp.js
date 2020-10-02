@@ -119,7 +119,7 @@ function SignUp({ authenticateRegister }) {
 
       //老师这个setSubmitError(true)第一次并不工作，
       //第一次按sign up button 之后还是false，第二次才变为true
-      //虽然界面显示的是对的，但是console输出来的值不对
+      //虽然界面显示的是对的，但是console输出来的值不对,不是很清楚为什么
       if (resp.status === 200) {
         setAuthData({
           isLoggingIn: false,
