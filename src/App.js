@@ -1,24 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+/*
+ * @Author: your name
+ * @Date: 2020-09-30 12:42:01
+ * @LastEditTime: 2020-10-02 10:03:40
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /react-register-signin/src/App.js
+ */
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import SignIn from "./views/SignIn/SignIn";
+import AppAppBar from "./views/AppAppBar/AppAppBar";
+import SignUp from "./views/SignUp/SignUp";
+import MyProfile from "./views/MyProfile/MyProfile";
+import NotFound from "./views/NotFound/NotFound";
+import { AuthenticationManger } from "./components/Authentication/Authentication";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+//import history from './history/History'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Router>
+        <AppAppBar />
+        <AuthenticationManger>
+          <Switch>
+            <PrivateRoute
+              exact
+              permissions={["admin"]}
+              path="/"
+              component={MyProfile}
+            />
+            <Route exact path="/signin" component={SignIn} />
+            <Route exact path="/signup" component={SignUp} />
+            <Route path="/*" component={NotFound} />
+          </Switch>
+        </AuthenticationManger>
+      </Router>
     </div>
   );
 }
