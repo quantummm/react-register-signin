@@ -74,8 +74,7 @@ function SignUp({ authenticateRegister }) {
       ["email", "name", "password", "passwordConfirmed"],
       values
     );
-    // 老师我没懂这个email()为什么传递两个参数，不是只要一个values.email就可以吗
-    // validation.js这个方法里email()也只接收一个参数呀
+
     if (!validateErrors.email) {
       const emailError = email(values.email, values);
       if (emailError) {
@@ -83,7 +82,6 @@ function SignUp({ authenticateRegister }) {
       }
     }
 
-    // 检验密码输入一致,当两个值都输入的适合进行检测
     if (!(validateErrors.password || validateErrors.passwordConfirmed)) {
       const passwordConfirmedError = passwordConfirmCheck(
         values.password,
@@ -117,9 +115,6 @@ function SignUp({ authenticateRegister }) {
       );
       setSubmitting(false);
 
-      //老师这个setSubmitError(true)第一次并不工作，
-      //第一次按sign up button 之后还是false，第二次才变为true
-      //虽然界面显示的是对的，但是console输出来的值不对,不是很清楚为什么
       if (resp.status === 200) {
         setAuthData({
           isLoggingIn: false,

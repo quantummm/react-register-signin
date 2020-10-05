@@ -50,8 +50,6 @@ export class AuthenticationManger extends React.Component {
     return resp;
   };
 
-  //老师这边register是不是要想这样单独写一个方法，post数据进后端
-  //那后面render 里面需要加authenticateRegister这个方法，还有别的比较好的方法吗
   authenticateRegister = async (email, name, password) => {
     const resp = await request(registUrl, {
       method: "POST",
@@ -78,9 +76,7 @@ export class AuthenticationManger extends React.Component {
     }
     return resp;
   };
-  // 这个key authenticate 不是上面AuthenticationManger 中authenticate方法的名字
-  // 是单独一个key,后面this.authenticate是方法
-  // 所以在signin,signup里面的参数是那个key
+
   render = () => (
     <AuthenticationCtx.Provider
       value={{
