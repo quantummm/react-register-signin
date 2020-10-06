@@ -1,7 +1,9 @@
 const request = async (url, options) => {
   const headers = {
     credentials: "same-origin",
-    headers: { "Content-Type": "application/json; charset=utf-8" },
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
   };
 
   const requestOptions = {

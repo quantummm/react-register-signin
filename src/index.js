@@ -1,11 +1,3 @@
-/*
- * @Author: Aiden
- * @Date: 2020-09-30 12:42:01
- * @LastEditTime: 2020-10-02 17:19:57
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /react-register-signin/src/index.js
- */
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";

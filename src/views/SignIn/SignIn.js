@@ -55,7 +55,6 @@ function SignIn({ authenticate }) {
 
   const handleChange = ({ target }) => {
     const { name, value } = target;
-    console.log(value);
 
     setValues({
       ...values,
@@ -86,7 +85,6 @@ function SignIn({ authenticate }) {
       setSubmitting(true);
       const resp = await authenticate(values.email, values.password);
       setSubmitting(false);
-      console.log("signin" + resp);
 
       if (resp.status === 200) {
         setAuthData({

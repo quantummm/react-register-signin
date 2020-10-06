@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, Redirect } from "react-router-dom";
+import { useLocation, Redirect, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import Typography from "../../components/Typography/Typography";
@@ -9,6 +9,8 @@ import RFTextField from "../../form/RFTextField";
 import FormButton from "../../form/FormButton";
 import FormFeedback from "../../form/FormFeedback";
 import { withAuth } from "../../components/Authentication/Authentication";
+import { registUrl } from "../../config/url";
+import request from "../../utils/request";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -37,9 +39,9 @@ const deaultErrors = {
   passwordConfirmed: undefined,
 };
 
-function SignUp({ authenticateRegister }) {
+function SignUp({ authenticate, isAuthenticated }) {
   const location = useLocation();
-
+  const history = useHistory();
   const classes = useStyles();
 
   const [values, setValues] = useState(deaultValues);
@@ -51,12 +53,6 @@ function SignUp({ authenticateRegister }) {
   const [submitError, setSubmitError] = useState(false);
 
   const { from } = location.state || { from: { pathname: "/" } };
-
-  const [authData, setAuthData] = useState({
-    isLoggingIn: true,
-    redirectToReferrer: false,
-    hasAuthenticationFailed: false,
-  });
 
   const [submitErrorMessage, setSubmitErrorMessage] = useState();
 
@@ -76,9 +72,9 @@ function SignUp({ authenticateRegister }) {
     );
 
     if (!validateErrors.email) {
-      const emailError = email(values.email, values);
+      const emailError = email(values.email);
       if (emailError) {
-        validateErrors.email = email(values.email, values);
+        validateErrors.email = emailError;
       }
     }
 
@@ -108,138 +104,127 @@ function SignUp({ authenticateRegister }) {
 
     try {
       setSubmitting(true);
-      const resp = await authenticateRegister(
-        values.email,
-        values.name,
-        values.password
-      );
+      const validCurrentUser = {
+        email: values.email,
+        name: values.name,
+        password: values.password,
+        passwordConfirmation: values.passwordConfirmed,
+      };
+
+      const resp = await request(registUrl, {
+        method: "POST",
+        body: JSON.stringify({ ...validCurrentUser }),
+      });
+
       setSubmitting(false);
 
+      console.log(resp.status);
       if (resp.status === 200) {
-        setAuthData({
-          isLoggingIn: false,
-          redirectToReferrer: true,
-          hasAuthenticationFailed: false,
-        });
+        await authenticate(values.email, values.password);
+
+        history.push("/");
       } else {
         const error = await resp.json();
         setSubmitError(error.message);
       }
     } catch (error) {
-      setAuthData({
-        isLoggingIn: true,
-        redirectToReferrer: false,
-        //hasAuthenticationFailed: true,
-      });
       setSubmitError(true);
       //console.log(submitError);
       setSubmitErrorMessage(error.name + ": " + error.message);
       setSubmitting(false);
-      return;
     }
   };
 
-  if (authData.redirectToReferrer) return <Redirect to={from} />;
-  if (authData.isLoggingIn) {
-    return (
-      <>
-        <AppForm>
-          <>
-            <Typography
-              variant="h3"
-              gutterBottom
-              marked="center"
-              align="center"
-            >
-              Sign Up
-            </Typography>
-            <Typography variant="body2" align="center">
-              {/* {"Already have an account "} */}
-              <Link href="/signin" align="center" underline="always">
-                Already have an account.
-              </Link>
-            </Typography>
-          </>
-          <form className={classes.root} autoComplete="off" noValidate>
-            <RFTextField
-              autoComplete="email"
-              autoFocus
-              onChange={handleChange}
-              disabled={submitting}
-              fullWidth
-              label="Email"
-              margin="normal"
-              name="email"
-              error={errors.email}
-              size="large"
-              value={values.email}
-            />
-            <RFTextField
-              autoComplete="name"
-              autoFocus
-              onChange={handleChange}
-              disabled={submitting}
-              fullWidth
-              label="Name"
-              margin="normal"
-              name="name"
-              error={errors.name}
-              size="large"
-              value={values.name}
-            />
+  if (isAuthenticated) return <Redirect to={from} />;
+  return (
+    <React.Fragment>
+      <AppForm>
+        <React.Fragment>
+          <Typography variant="h3" gutterBottom marked="center" align="center">
+            Sign Up
+          </Typography>
+          <Typography variant="body2" align="center">
+            {/* {"Already have an account "} */}
+            <Link href="/signin" align="center" underline="always">
+              Already have an account.
+            </Link>
+          </Typography>
+        </React.Fragment>
+        <form className={classes.root} autoComplete="off" noValidate>
+          <RFTextField
+            autoComplete="email"
+            autoFocus
+            onChange={handleChange}
+            disabled={submitting}
+            fullWidth
+            label="Email"
+            margin="normal"
+            name="email"
+            error={errors.email}
+            size="large"
+            value={values.email}
+          />
+          <RFTextField
+            autoComplete="name"
+            autoFocus
+            onChange={handleChange}
+            disabled={submitting}
+            fullWidth
+            label="Name"
+            margin="normal"
+            name="name"
+            error={errors.name}
+            size="large"
+            value={values.name}
+          />
 
-            <RFTextField
-              fullWidth
-              size="large"
-              onChange={handleChange}
-              disabled={submitting}
-              error={errors.password}
-              name="password"
-              autoComplete="current-password"
-              label="Password"
-              type="password"
-              margin="normal"
-              value={values.password}
-            />
+          <RFTextField
+            fullWidth
+            size="large"
+            onChange={handleChange}
+            disabled={submitting}
+            error={errors.password}
+            name="password"
+            autoComplete="current-password"
+            label="Password"
+            type="password"
+            margin="normal"
+            value={values.password}
+          />
 
-            <RFTextField
-              fullWidth
-              size="large"
-              onChange={handleChange}
-              disabled={submitting}
-              error={errors.passwordConfirmed}
-              name="passwordConfirmed"
-              label="Password Confirmed"
-              type="password"
-              margin="normal"
-              value={values.passwordConfirmed}
-            />
+          <RFTextField
+            fullWidth
+            size="large"
+            onChange={handleChange}
+            disabled={submitting}
+            error={errors.passwordConfirmed}
+            name="passwordConfirmed"
+            label="Password Confirmed"
+            type="password"
+            margin="normal"
+            value={values.passwordConfirmed}
+          />
 
-            {submitError ? (
-              <FormFeedback className={classes.feedback} error>
-                <>{submitErrorMessage}</>
-              </FormFeedback>
-            ) : null}
+          {submitError ? (
+            <FormFeedback className={classes.feedback} error>
+              <>{submitErrorMessage}</>
+            </FormFeedback>
+          ) : null}
 
-            <FormButton
-              className={classes.button}
-              disabled={submitting}
-              size="large"
-              color="secondary"
-              fullWidth
-              onClick={handleSubmit}
-            >
-              {"Sign Up"}
-            </FormButton>
-          </form>
-        </AppForm>
-      </>
-    );
-  }
-
-  if (authData.hasAuthenticationFailed) return <Redirect to={"/notfound"} />;
-
-  return <div>Loading...</div>;
+          <FormButton
+            className={classes.button}
+            disabled={submitting}
+            size="large"
+            color="secondary"
+            fullWidth
+            onClick={handleSubmit}
+          >
+            {submitting ? "In progress... " : "Sign Up"}
+          </FormButton>
+        </form>
+      </AppForm>
+    </React.Fragment>
+  );
 }
 
 export default withAuth(SignUp);
