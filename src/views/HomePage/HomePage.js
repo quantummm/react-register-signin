@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '../../components/Typography/Typography';
-import Overview from '../../components/Overview/Overview';
 
 const styles = (theme) => ({
   root: {
@@ -15,31 +14,23 @@ const styles = (theme) => ({
     gridTemplateColumns: '640px 640px',
     gridGap: '10px',
   },
-  container: {
-    '& > *': {
-      height: '100%',
-    },
-  },
 });
 
-function MyProfile(props) {
+function HomePage(props) {
   const { classes } = props;
 
   return (
     <Container className={classes.root} component="section">
       <Typography variant="h4" marked="center" align="center" component="h2">
-        My Portfolio
+        Home Page
       </Typography>
-      <div className={classes.images}>My Profile</div>
-      <div>
-        <Overview />
-      </div>
+      <div className={classes.images}>Home page</div>
     </Container>
   );
 }
 
-MyProfile.propTypes = {
+HomePage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(MyProfile);
+export default withStyles(styles)(HomePage);
